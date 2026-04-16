@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tap2Earn - Premium Color Gaming App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0f172a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, #fff5eb 0%, #ffe8f0 100%);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border-radius: 0;
+            overflow-x: hidden;
+        }
+
+        /* Animations */
+        @keyframes floatIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(249,115,22,0.3), 0 0 10px rgba(249,115,22,0.2); }
+            50% { box-shadow: 0 0 20px rgba(249,115,22,0.8), 0 0 30px rgba(236,72,153,0.5); }
+        }
+
+        @keyframes bounceBtn {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes shakeWin {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 0.5; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .btn-effect {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-effect:active {
+            transform: scale(0.96);
+        }
+
+        .btn-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .btn-effect:active::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        /* Auth Card */
+        .auth-card {
+            background: rgba(255,255,255,0.98);
+            border-radius: 48px;
+            margin: 20px 16px;
+            overflow: hidden;
+            animation: floatIn 0.5s ease-out;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.3);
+            border: 1px solid rgba(249,115,22,0.2);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6a00, #ee0979);
+            color: white;
+            padding: 32px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '✨';
+            position: absolute;
+            font-size: 60px;
+            opacity: 0.2;
+            bottom: 10px;
+            right: 20px;
+            animation: glowPulse 2s infinite;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tabs {
+            display: flex;
+            background: #fff;
+            border-bottom: 2px solid #ffe0cc;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #64748b;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: #f97316;
+            background: linear-gradient(180deg, #fff, #fff5f0);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #f97316, #ec489a);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { width: 0; left: 50%; }
+            to { width: 100%; left: 0; }
+        }
+
+        .form-content {
+            padding: 28px 24px;
+        }
+
+        .form {
+            display: none;
+            animation: fadeScale 0.4s ease;
+        }
+
+        .form.active {
+            display: block;
+        }
+
+        @keyframes fadeScale {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.85rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #ffe0cc;
+            border-radius: 60px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .input-group input:focus {
+            border-color: #f97316;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(249,115,22,0.2);
+            transform: scale(1.01);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(95deg, #f97316, #ec489a);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 12px;
+            animation: glowPulse 2s infinite;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -8px rgba(249,115,22,0.6);
+        }
+
+        .message {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            text-align: center;
+            display: none;
+            font-weight: 500;
+        }
+
+        .message.error { background: #fee2e2; color: #dc2626; display: block; border-left: 5px solid #dc2626; animation: shakeWin 0.3s; }
+        .message.success { background: #d1fae5; color: #059669; display: block; border-left: 5px solid #059669; }
+
+        /* Dashboard */
+        .dashboard {
+            background: linear-gradient(145deg, #fff9f5 0%, #fff0f5 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #ff6a00, #ee0979);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: relative;
+        }
+
+        .coin-display {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(12px);
+            padding: 8px 24px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.7rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: glowPulse 1.5s infinite;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.25);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(5px);
+        }
+
+        .action-btn:active {
+            transform: scale(0.94);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px 16px;
+            padding-bottom: 85px;
+            overflow-y: auto;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 12px;
+            border-top: 1px solid rgba(249,115,22,0.3);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: #f97316;
+            background: linear-gradient(135deg, #fff0e6, #ffe4f0);
+            transform: translateY(-3px);
+        }
+
+        .nav-icon {
+            font-size: 1.8rem;
+            transition: transform 0.2s;
+        }
+
+        .nav-item:active .nav-icon {
+            transform: scale(0.9);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeScale 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 25px -10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 1px solid rgba(249,115,22,0.15);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -12px rgba(249,115,22,0.2);
+        }
+
+        .stats-grid {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #fff5e6, #ffeaf4);
+            flex: 1;
+            text-align: center;
+            padding: 18px;
+            border-radius: 28px;
+            transition: all 0.2s;
+        }
+
+        .stat-item:active {
+            transform: scale(0.97);
+        }
+
+        /* Game Modal */
+        .game-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-modal.active {
+            display: flex;
+            animation: fadeScale 0.25s;
+        }
+
+        .game-container {
+            background: linear-gradient(145deg, #ffffff, #fff8f0);
+            border-radius: 56px;
+            width: 92%;
+            max-width: 380px;
+            overflow: hidden;
+            animation: floatIn 0.4s;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.4);
+        }
+
+        .game-header {
+            background: linear-gradient(135deg, #f97316, #ec489a);
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            color: white;
+        }
+
+        .close-game {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 28px;
+            width: 42px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .close-game:active {
+            transform: rotate(90deg);
+        }
+
+        .game-body {
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        .big-tap-circle {
+            width: 170px;
+            height: 170px;
+            background: radial-gradient(circle, #ffb347, #f97316);
+            border-radius: 50%;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: 0.05s linear;
+            animation: glowPulse 1.2s infinite;
+        }
+
+        .big-tap-circle:active {
+            transform: scale(0.92);
+        }
+
+        .tap-text {
+            font-size: 42px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .locked-overlay {
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            font-weight: bold;
+        }
+
+        .bet-section {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #fff5ed, #ffeef5);
+            padding: 20px;
+            border-radius: 40px;
+        }
+
+        .bet-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 12px 0;
+        }
+
+        .bet-input {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #ffcd94;
+            border-radius: 60px;
+            font-size: 1rem;
+            text-align: center;
+            font-weight: bold;
+            background: white;
+        }
+
+        .beat-btn {
+            background: linear-gradient(95deg, #f97316, #ec489a);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .beat-btn:active {
+            transform: scale(0.95);
+        }
+
+        .result-area {
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 32px;
+            margin-top: 16px;
+            font-weight: 600;
+            border: 1px solid #ffcd94;
+        }
+
+        /* Deposit Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 48px;
+            width: 85%;
+            max-width: 350px;
+            overflow: hidden;
+            animation: floatIn 0.3s;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #f97316, #ec489a);
+            padding: 18px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 24px;
+            text-align: center;
+        }
+
+        .amount-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .amount-btn {
+            background: linear-gradient(135deg, #ffedd5, #ffe0cc);
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .amount-btn:active {
+            transform: scale(0.94);
+        }
+
+        .copy-btn, .confirm-btn {
+            background: linear-gradient(95deg, #f97316, #ec489a);
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            color: white;
+            border: none;
+            margin-top: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-modal {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 28px;
+            width: 36px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+        }
+
+        .deposit-warning {
+            background: #fee2e2;
+            padding: 12px;
+            border-radius: 28px;
+            color: #dc2626;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper" id="appContainer"></div>
+
+<script>
+    // ========== CONFIGURATION ==========
+    const MIN_DEPOSIT_TO_UNLOCK = 100;  // ₹100 mandatory to unlock tap game
+    const WHATSAPP_NUMBER = "9296768190";
+    const WITHDRAW_MIN_COINS = 200;
+    
+    // Data persistence
+    let users = JSON.parse(localStorage.getItem('tap2earn_users_v2')) || [];
+    let userCoins = JSON.parse(localStorage.getItem('tap2earn_coins_v2')) || {};
+    let userDepositStatus = JSON.parse(localStorage.getItem('tap2earn_deposit_status')) || {}; // { userId: totalDeposited }
+    let currentUser = null;
+    
+    function saveUsers() { localStorage.setItem('tap2earn_users_v2', JSON.stringify(users)); }
+    function saveCoins() { localStorage.setItem('tap2earn_coins_v2', JSON.stringify(userCoins)); }
+    function saveDepositStatus() { localStorage.setItem('tap2earn_deposit_status', JSON.stringify(userDepositStatus)); }
+    
+    function getCoinBalance(uid) { return userCoins[uid] || 0; }
+    function setCoinBalance(uid, amount) { userCoins[uid] = Math.max(0, amount); saveCoins(); updateUI(); }
+    function addCoins(uid, add) { let newBal = (userCoins[uid] || 0) + add; userCoins[uid] = Math.max(0, newBal); saveCoins(); updateUI(); return newBal; }
+    
+    function getUserDeposit(uid) { return userDepositStatus[uid] || 0; }
+    function addUserDeposit(uid, amount) { 
+        userDepositStatus[uid] = (userDepositStatus[uid] || 0) + amount; 
+        saveDepositStatus(); 
+    }
+    function isGameUnlocked(uid) { return getUserDeposit(uid) >= MIN_DEPOSIT_TO_UNLOCK; }
+    
+    function updateUI() {
+        if(!currentUser) return;
+        const bal = getCoinBalance(currentUser.id);
+        document.querySelectorAll('.coin-balance-display').forEach(el => el.innerText = bal);
+        const unlockStatus = isGameUnlocked(currentUser.id);
+        const gameBtn = document.getElementById('gameActionBtn');
+        if(gameBtn) gameBtn.style.opacity = unlockStatus ? '1' : '0.6';
+    }
+    
+    // Deposit Modal & Payment Verification
+    function openDepositModal() {
+        const modal = document.getElementById('depositModal');
+        if(modal) modal.classList.add('active');
+    }
+    function closeDepositModal() {
+        const modal = document.getElementById('depositModal');
+        if(modal) modal.classList.remove('active');
+    }
+    
+    function verifyDeposit(amount) {
+        if(!currentUser) return;
+        const depositAmt = parseInt(amount);
+        if(isNaN(depositAmt) || depositAmt < MIN_DEPOSIT_TO_UNLOCK) {
+            alert(`❌ Minimum deposit ₹${MIN_DEPOSIT_TO_UNLOCK} required to unlock tap game!`);
+            return;
+        }
+        // UPI Copy + WhatsApp verification
+        const upiId = "tap2earn@okhdfcbank";
+        navigator.clipboard.writeText(upiId).then(() => {
+            alert(`✅ UPI ID Copied: ${upiId}\n✅ Send exactly ₹${depositAmt} and screenshot on WhatsApp.\n✅ After verification, tap game will unlock!`);
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Deposit Request - User: ${currentUser.username} (ID:${currentUser.id}) - Amount: ₹${depositAmt}`, '_blank');
+            alert("📌 After sending screenshot, you will receive a confirmation code from admin. Enter it in Profile > Verify Deposit to unlock game.");
+            closeDepositModal();
+        }).catch(() => alert("Copy manually: " + upiId));
+    }
+    
+    // Manual deposit verification (admin code)
+    function verifyDepositCode() {
+        const code = prompt("Enter the deposit confirmation code received from WhatsApp admin:");
+        if(code && code.length > 3) {
+            // Simulate adding ₹100 deposit unlock
+            if(!isGameUnlocked(currentUser.id)) {
+                addUserDeposit(currentUser.id, MIN_DEPOSIT_TO_UNLOCK);
+                alert(`🎉 SUCCESS! ₹${MIN_DEPOSIT_TO_UNLOCK} deposit verified! Tap Game UNLOCKED! 🎉`);
+                updateUI();
+                renderDashboard(); // refresh
+            } else {
+                alert("Game already unlocked!");
+            }
+        } else {
+            alert("Invalid code. Contact admin on WhatsApp.");
+        }
+    }
+    
+    // Game functions (ONLY if unlocked)
+    function openGame() {
+        if(!currentUser) return;
+        if(!isGameUnlocked(currentUser.id)) {
+            alert(`🔒 TAP GAME LOCKED! 🔒\nDeposit ₹${MIN_DEPOSIT_TO_UNLOCK} or more to unlock the tap & bet game.\nNo free coins without deposit!`);
+            openDepositModal();
+            return;
+        }
+        const modal = document.getElementById('gameModal');
+        if(modal) modal.classList.add('active');
+        document.getElementById('betInputValue').value = "10";
+        document.getElementById('gameResultMsg').innerHTML = "⚡ TAP or PLACE BET! ⚡";
+    }
+    
+    function closeGame() {
+        const modal = document.getElementById('gameModal');
+        if(modal) modal.classList.remove('active');
+    }
+    
+    function performTap() {
+        if(!currentUser) return;
+        if(!isGameUnlocked(currentUser.id)) {
+            alert("🔒 Game locked! Deposit ₹100 to start tapping and earning.");
+            closeGame();
+            openDepositModal();
+            return;
+        }
+        let reward = Math.floor(Math.random() * 6) + 4; // 4-9 coins per tap
+        addCoins(currentUser.id, reward);
+        const msgDiv = document.getElementById('gameResultMsg');
+        msgDiv.innerHTML = `✨ +${reward} COINS EARNED! ✨`;
+        setTimeout(() => {
+            if(msgDiv.innerHTML.includes("+")) msgDiv.innerHTML = "💥 KEEP TAPPING! 💥";
+        }, 800);
+        const circle = document.querySelector('.big-tap-circle');
+        if(circle) circle.style.transform = 'scale(0.92)';
+        setTimeout(() => { if(circle) circle.style.transform = ''; }, 100);
+        updateUI();
+    }
+    
+    function placeBet() {
+        if(!currentUser) return;
+        if(!isGameUnlocked(currentUser.id)) {
+            alert("🔒 Deposit ₹100 first to play betting game!");
+            closeGame();
+            openDepositModal();
+            return;
+        }
+        let betVal = parseInt(document.getElementById('betInputValue').value);
+        if(isNaN(betVal) || betVal <= 0) betVal = 5;
+        const balance = getCoinBalance(currentUser.id);
+        if(betVal > balance) {
+            document.getElementById('gameResultMsg').innerHTML = "❌ INSUFFICIENT COINS! Deposit or tap more. ❌";
+            return;
+        }
+        addCoins(currentUser.id, -betVal);
+        const winChance = Math.random();
+        let wonCoins = 0;
+        if(winChance < 0.48) { // 48% win rate
+            let multiplier = Math.floor(Math.random() * 3) + 1.2;
+            wonCoins = Math.floor(betVal * multiplier);
+            addCoins(currentUser.id, wonCoins);
+            document.getElementById('gameResultMsg').innerHTML = `🎉 YOU WON! ${wonCoins} COINS (${multiplier.toFixed(1)}x) 🎉`;
+        } else {
+            document.getElementById('gameResultMsg').innerHTML = `😢 LOST! ${betVal} COINS. TRY AGAIN! 😢`;
+        }
+        updateUI();
+    }
+    
+    function showWithdrawModal() {
+        const bal = getCoinBalance(currentUser.id);
+        if(bal < WITHDRAW_MIN_COINS) {
+            alert(`❌ Minimum ${WITHDRAW_MIN_COINS} coins needed. You have ${bal} coins.`);
+            return;
+        }
+        alert(`✅ Withdrawal request: Contact WhatsApp ${WHATSAPP_NUMBER}\nUsername: ${currentUser.username}\nCoins: ${bal}\nMinimum withdrawal ${WITHDRAW_MIN_COINS} coins.`);
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Withdrawal - User: ${currentUser.username}, Coins: ${bal}`, '_blank');
+    }
+    
+    function logout() {
+        currentUser = null;
+        renderAuthScreen();
+    }
+    
+    // Auth functions
+    function registerUser() {
+        const mobile = document.getElementById('regMobile').value.trim();
+        const username = document.getElementById('regUsername').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const pwd = document.getElementById('regPassword').value;
+        const msgDiv = document.getElementById('registerMessage');
+        
+        if(!mobile || !username || !email || !pwd) { showMessage(msgDiv, 'All fields required', 'error'); return; }
+        if(!/^\d{10}$/.test(mobile)) { showMessage(msgDiv, 'Mobile must be 10 digits', 'error'); return; }
+        if(username.length < 3) { showMessage(msgDiv, 'Username min 3 characters', 'error'); return; }
+        if(!email.endsWith('@gmail.com')) { showMessage(msgDiv, 'Only @gmail.com allowed', 'error'); return; }
+        if(pwd.length < 4) { showMessage(msgDiv, 'Password min 4 characters', 'error'); return; }
+        if(users.some(u => u.mobile === mobile)) { showMessage(msgDiv, 'Mobile already registered', 'error'); return; }
+        if(users.some(u => u.username === username)) { showMessage(msgDiv, 'Username taken', 'error'); return; }
+        
+        const newId = Date.now() + '' + Math.floor(Math.random()*10000);
+        const newUser = { id: newId, mobile, username, email, password: pwd };
+        users.push(newUser);
+        saveUsers();
+        userCoins[newId] = 0;  // ZERO FREE COINS! No free points.
+        saveCoins();
+        if(!userDepositStatus[newId]) userDepositStatus[newId] = 0;
+        saveDepositStatus();
+        showMessage(msgDiv, '✅ Registration success! Please login.', 'success');
+        setTimeout(() => switchTab('login'), 1500);
+    }
+    
+    function loginUser() {
+        const loginId = document.getElementById('loginUsername').value.trim();
+        const pwd = document.getElementById('loginPassword').value;
+        const msgDiv = document.getElementById('loginMessage');
+        if(!loginId || !pwd) { showMessage(msgDiv, 'Enter username/mobile and password', 'error'); return; }
+        const found = users.find(u => (u.username === loginId || u.mobile === loginId) && u.password === pwd);
+        if(!found) { showMessage(msgDiv, 'Invalid credentials', 'error'); return; }
+        currentUser = found;
+        if(userCoins[currentUser.id] === undefined) userCoins[currentUser.id] = 0;
+        if(userDepositStatus[currentUser.id] === undefined) userDepositStatus[currentUser.id] = 0;
+        saveCoins(); saveDepositStatus();
+        renderDashboard();
+    }
+    
+    function showMessage(el, txt, type) { el.textContent = txt; el.className = `message ${type}`; setTimeout(() => { if(el.className.includes('message')) el.className = 'message'; }, 2800); }
+    function switchTab(tab) {
+        const loginForm = document.getElementById('loginForm');
+        const regForm = document.getElementById('registerForm');
+        const btns = document.querySelectorAll('.tab-btn');
+        if(tab === 'login') {
+            loginForm.classList.add('active'); regForm.classList.remove('active');
+            btns[0].classList.add('active'); btns[1].classList.remove('active');
+        } else {
+            loginForm.classList.remove('active'); regForm.classList.add('active');
+            btns[0].classList.remove('active'); btns[1].classList.add('active');
+        }
+        document.querySelectorAll('.message').forEach(m => m.className = 'message');
+    }
+    
+    let currentSection = 'home';
+    function showSection(section) {
+        currentSection = section;
+        document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+        document.getElementById(`section-${section}`).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        if(section === 'home') document.getElementById('navHome').classList.add('active');
+        if(section === 'stats') document.getElementById('navStats').classList.add('active');
+        if(section === 'profile') document.getElementById('navProfile').classList.add('active');
+        updateUI();
+    }
+    
+    function renderAuthScreen() {
+        const container = document.getElementById('appContainer');
+        container.innerHTML = `
+            <div class="auth-card">
+                <div class="header"><h2>🎮 TAP2EARN 🎮</h2><p>Deposit ₹100 → Unlock Game → Earn Coins</p></div>
+                <div class="tabs"><button class="tab-btn active" onclick="window.switchTab('login')">🔐 LOGIN</button><button class="tab-btn" onclick="window.switchTab('register')">📝 REGISTER</button></div>
+                <div class="form-content">
+                    <div id="loginForm" class="form active"><div class="input-group"><label>📱 Username / Mobile</label><input type="text" id="loginUsername" placeholder="username or mobile"></div><div class="input-group"><label>🔒 Password</label><input type="password" id="loginPassword" placeholder="password"></div><button class="btn-submit btn-effect" onclick="loginUser()">LOGIN</button><div id="loginMessage" class="message"></div></div>
+                    <div id="registerForm" class="form"><div class="input-group"><label>📞 Mobile (10 digits)</label><input type="tel" id="regMobile" placeholder="9876543210"></div><div class="input-group"><label>👤 Username</label><input type="text" id="regUsername" placeholder="unique username"></div><div class="input-group"><label>📧 Email (@gmail.com)</label><input type="email" id="regEmail" placeholder="you@gmail.com"></div><div class="input-group"><label>🔑 Password (4+ chars)</label><input type="password" id="regPassword" placeholder="****"></div><button class="btn-submit btn-effect" onclick="registerUser()">REGISTER</button><div id="registerMessage" class="message"></div></div>
+                </div>
+            </div>
+        `;
+        window.switchTab = switchTab; window.loginUser = loginUser; window.registerUser = registerUser;
+    }
+    
+    function renderDashboard() {
+        const bal = getCoinBalance(currentUser.id);
+        const unlocked = isGameUnlocked(currentUser.id);
+        const depositAmt = getUserDeposit(currentUser.id);
+        const container = document.getElementById('appContainer');
+        container.innerHTML = `
+            <div class="dashboard">
+                <div class="top-bar"><div class="coin-display">🪙 <span class="coin-balance-display">${bal}</span></div><div><button class="action-btn btn-effect" id="gameActionBtn" onclick="window.openGame()">🎮 GAME</button><button class="action-btn btn-effect" onclick="window.logout()" style="margin-left:8px;">🚪 LOGOUT</button></div></div>
+                <div class="main-content">
+                    <div id="section-home" class="content-section active"><div class="card"><h3>✨ WELCOME, ${currentUser.username} ✨</h3><p>${unlocked ? '🎉 GAME UNLOCKED! Tap & Bet to earn coins!' : '🔒 GAME LOCKED! Deposit ₹100 to unlock tap & betting game. No free coins without deposit.'}</p><div class="deposit-warning" style="${unlocked ? 'display:none' : ''}">⚠️ DEPOSIT ₹${MIN_DEPOSIT_TO_UNLOCK} TO UNLOCK TAP GAME ⚠️</div></div>
+                        <div class="card"><h3>⚡ QUICK ACTIONS</h3><button class="btn-submit btn-effect" onclick="window.openGame()">🎯 PLAY TAP GAME</button><button class="btn-submit btn-effect" style="margin-top:12px; background:#10b981;" onclick="window.openDepositModal()">💰 DEPOSIT (UNLOCK GAME)</button><button class="btn-submit btn-effect" style="margin-top:12px; background:#3b82f6;" onclick="window.showWithdrawModal()">💸 WITHDRAW (${WITHDRAW_MIN_COINS}+ coins)</button></div></div>
+                    <div id="section-stats" class="content-section"><div class="card"><h3>📊 STATISTICS</h3><div class="stats-grid"><div class="stat-item">🪙 COINS<br><strong class="coin-balance-display">${bal}</strong></div><div class="stat-item">💵 DEPOSIT<br>₹${depositAmt}</div><div class="stat-item">🔓 UNLOCK<br>${unlocked ? '✅ YES' : '❌ NO'}</div></div></div><div class="card"><h3>🏆 REFERRAL</h3><button class="copy-btn btn-effect" onclick="navigator.clipboard.writeText('Join Tap2Earn with ${currentUser.username}'); alert('Copied!')">📋 COPY INVITE</button></div></div>
+                    <div id="section-profile" class="content-section"><div class="card"><h3>👤 PROFILE</h3><p><strong>Username:</strong> ${currentUser.username}<br><strong>Mobile:</strong> ${currentUser.mobile}<br><strong>Email:</strong> ${currentUser.email}<br><strong>🪙 Coins:</strong> <span class="coin-balance-display">${bal}</span><br><strong>💰 Total Deposit:</strong> ₹${depositAmt}<br><strong>🎮 Game Status:</strong> ${unlocked ? 'UNLOCKED' : 'LOCKED (Deposit ₹100)'}</p><button class="btn-submit btn-effect" onclick="window.openDepositModal()">➕ DEPOSIT</button><button class="btn-submit btn-effect" style="margin-top:12px; background:#8b5cf6;" onclick="window.verifyDepositCode()">🔑 VERIFY DEPOSIT CODE</button><button class="btn-submit btn-effect" style="margin-top:12px;" onclick="window.showWithdrawModal()">💸 WITHDRAW</button></div></div>
+                </div>
+                <div class="bottom-nav"><button class="nav-item active" id="navHome" onclick="window.showSection('home')"><span class="nav-icon">🏠</span><span>HOME</span></button><button class="nav-item" id="navStats" onclick="window.showSection('stats')"><span class="nav-icon">📈</span><span>STATS</span></button><button class="nav-item" id="navProfile" onclick="window.showSection('profile')"><span class="nav-icon">👤</span><span>PROFILE</span></button></div>
+            </div>
+            <div id="gameModal" class="game-modal"><div class="game-container"><div class="game-header"><span>🎲 TAP & BET GAME 🎲</span><button class="close-game" onclick="window.closeGame()">✖</button></div><div class="game-body"><div class="big-tap-circle" onclick="window.performTap()"><div class="tap-text">👉 TAP 👈</div></div><div class="bet-section"><div class="bet-row"><input type="number" id="betInputValue" class="bet-input" value="10" step="5"><button class="beat-btn btn-effect" onclick="window.placeBet()">⚡ PLACE BET</button></div><div id="gameResultMsg" class="result-area">💥 TAP OR BET TO EARN 💥</div></div></div></div></div>
+            <div id="depositModal" class="modal"><div class="modal-content"><div class="modal-header"><span>💰 DEPOSIT (UNLOCK GAME)</span><button class="close-modal" onclick="window.closeDepositModal()">✖</button></div><div class="modal-body"><p class="deposit-warning">🔒 Minimum ₹${MIN_DEPOSIT_TO_UNLOCK} to unlock Tap Game!</p><p>UPI ID: <strong>tap2earn@okhdfcbank</strong></p><div class="amount-grid"><button class="amount-btn btn-effect" onclick="window.verifyDeposit(100)">₹100</button><button class="amount-btn btn-effect" onclick="window.verifyDeposit(200)">₹200</button><button class="amount-btn btn-effect" onclick="window.verifyDeposit(500)">₹500</button></div><button class="copy-btn btn-effect" onclick="window.verifyDeposit(100)">📌 DEPOSIT & UNLOCK</button><small style="display:block; margin-top:12px;">After payment, get code from admin & verify in profile.</small></div></div></div>
+        `;
+        window.openGame = openGame; window.closeGame = closeGame; window.performTap = performTap; window.placeBet = placeBet;
+        window.openDepositModal = openDepositModal; window.closeDepositModal = closeDepositModal; window.verifyDeposit = verifyDeposit;
+        window.showWithdrawModal = showWithdrawModal; window.logout = logout; window.showSection = showSection;
+        window.verifyDepositCode = verifyDepositCode;
+        updateUI();
+        showSection('home');
+    }
+    
+    function init() { if(currentUser) renderDashboard(); else renderAuthScreen(); }
+    window.init = init; init();
+</script>
+</body>
+</html>
